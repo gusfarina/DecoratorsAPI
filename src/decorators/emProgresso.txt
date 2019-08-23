@@ -1,0 +1,21 @@
+// function security(check) {
+//   return function(target, propertyKey?, descriptor?) {
+//     if (check === "checkAuth") {
+//       function callBack(req, res, next) {
+//         if (req.isAuth) {
+//           console.log("Autenticado");
+//           next();
+//         } else {
+//           throw new Error("Nao Autenticado");
+//         }
+//       }
+//     }
+//   };
+// }
+// app.use(security);
+
+// @security("checkAuth")
+
+// Decorator de @billing()
+// Decorator de @checkPermission("inserir.permissoes")
+// Decorator de @noCache()

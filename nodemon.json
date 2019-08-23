@@ -1,0 +1,8 @@
+{
+  "watch": ["content.ts", "src"],
+  "ext": "ts",
+  "execMap": {
+    "ts": "ts-node content.ts"
+  },
+  "env": {}
+}
