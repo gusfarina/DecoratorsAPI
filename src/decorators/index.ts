@@ -14,7 +14,7 @@ interface RouteDefinition {
     path: string;
     method: METHOD;
     value: (req: Request, res: Response) => void;
-    middleValue: (req: Request, res: Response, next: NextFunction) => void;
+    middleValue: [(req: Request, res: Response, next: NextFunction) => void];
 }
 
 // Middleware
@@ -27,13 +27,14 @@ export const security = (middleFunc: (req: Request, res: Response, next: NextFun
                 // routeValue.middleValue.push(middleFunc);
                 if (routeValue.middleValue === undefined) {
                     // eslint-disable-next-line
-                    routeValue.middleValue = () => {};
+                    routeValue.middleValue = [() => {}];
                 } else {
                     // eslint-disable-next-line
-                    routeValue.middleValue = middleFunc;
+                    routeValue.middleValue.push(middleFunc);
                 }
             });
         } else {
+            // eslint-disable-next-line
             console.log(internalRoutes, 'nao entrou no if');
         }
     };
@@ -47,12 +48,14 @@ export const controller = (path = '/undefined') => {
             finalRoutes.forEach(vRoute => {
                 // eslint-disable-next-line no-console
                 console.log('Entrei na Controller');
+                // eslint-disable-next-line
                 console.log(`Defining route: ${path}${vRoute.path} for ${target.name}`);
                 // let spread: Function[] = ...vRoute.middleValue;
+                // eslint-disable-next-line
                 console.log();
                 switch (vRoute.method) {
                     case METHOD.GET:
-                        app.get(`${path}${vRoute.path}`, vRoute.middleValue, vRoute.value);
+                        app.get(`${path}${vRoute.path}`, vRoute.middleValue[0], vRoute.value);
                         break;
                     case METHOD.DELETE:
                         app.delete(`${path}${vRoute.path}`, vRoute.value);
@@ -78,6 +81,7 @@ export const controller = (path = '/undefined') => {
 
 export const route = (path: string, method: METHOD = METHOD.GET) => {
     return function decorator(target: object, propertyKey: string, descriptor: PropertyDescriptor) {
+        // eslint-disable-next-line
         console.log('Entrei no decorator de Rota');
         const originalFunc = descriptor.value;
         const internalRoutes = Object.getOwnPropertyDescriptor(target, ROUTES_DEFINITION);
@@ -91,7 +95,7 @@ export const route = (path: string, method: METHOD = METHOD.GET) => {
             method,
             path,
             value: originalFunc,
-            middleValue: (req: Request, res: Response, next: NextFunction) => {},
+            middleValue: [(req: Request, res: Response, next: NextFunction) => {}],
         });
         Object.defineProperty(target, ROUTES_DEFINITION, {
             configurable: true,

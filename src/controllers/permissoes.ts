@@ -35,23 +35,27 @@ const dados = {
 };
 
 function checkAuth(req: Request, res: Response, next: NextFunction): void {
+    // eslint-disable-next-line
     console.log('Entrei Aqui!');
     req.headers = {
-        gustavo: 'ocjdnj',
+        ...req.headers,
+        teste: 'Conteudo do Teste',
     };
     next();
 }
 
-// function checkAuth2(req: Request, res: Response, next: NextFunction): NextFunction {
-//     console.log('Entrei Aqui!');
-//     res.send('Checando2');
-//     res.send('...');
-//     res.send('Checado2!');
-//     return next();
-// }
+function checkAuth2(req: Request, res: Response, next: NextFunction): void {
+    // eslint-disable-next-line
+    console.log('Entrei Aqui!');
+    req.headers = {
+        ...req.headers,
+        teste2: 'Conteudo do Teste2',
+    };
+    next();
+}
 
 @controller('/permissoes')
-// @security(checkAuth2)
+@security(checkAuth2)
 @security(checkAuth)
 export class Permissoes {
     @route('/')
