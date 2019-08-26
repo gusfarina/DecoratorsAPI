@@ -1,4 +1,4 @@
-import { Permissoes, Usuarios } from './controllers';
+import { Permissoes, Usuarios } from './controllers'; //
 import { app } from './express';
 
 const permissoes = new Permissoes();

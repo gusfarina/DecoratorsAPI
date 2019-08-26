@@ -21,21 +21,17 @@ interface RouteDefinition {
 export const security = (middleFunc: (req: Request, res: Response, next: NextFunction) => void) => {
     return function decorator(target: Function) {
         const internalRoutes = Object.getOwnPropertyDescriptor(target.prototype, ROUTES_DEFINITION);
+        // eslint-disable-next-line
+        console.log('Se eu entrei aqui o decorator de Security foi chamado');
         if (internalRoutes !== undefined) {
             const propValue: RouteDefinition[] = internalRoutes.value;
             propValue.forEach(routeValue => {
-                // routeValue.middleValue.push(middleFunc);
                 if (routeValue.middleValue === undefined) {
                     // eslint-disable-next-line
                     routeValue.middleValue = [() => {}];
-                } else {
-                    // eslint-disable-next-line
-                    routeValue.middleValue.push(middleFunc);
                 }
+                routeValue.middleValue.push(middleFunc);
             });
-        } else {
-            // eslint-disable-next-line
-            console.log(internalRoutes, 'nao entrou no if');
         }
     };
 };
@@ -50,12 +46,11 @@ export const controller = (path = '/undefined') => {
                 console.log('Entrei na Controller');
                 // eslint-disable-next-line
                 console.log(`Defining route: ${path}${vRoute.path} for ${target.name}`);
-                // let spread: Function[] = ...vRoute.middleValue;
                 // eslint-disable-next-line
-                console.log();
+                console.log('Spread de MiddelValue: ', ...vRoute.middleValue);
                 switch (vRoute.method) {
                     case METHOD.GET:
-                        app.get(`${path}${vRoute.path}`, vRoute.middleValue[0], vRoute.value);
+                        app.get(`${path}${vRoute.path}`, ...vRoute.middleValue, vRoute.value);
                         break;
                     case METHOD.DELETE:
                         app.delete(`${path}${vRoute.path}`, vRoute.value);
@@ -95,7 +90,11 @@ export const route = (path: string, method: METHOD = METHOD.GET) => {
             method,
             path,
             value: originalFunc,
-            middleValue: [(req: Request, res: Response, next: NextFunction) => {}],
+            middleValue: [
+                (req: Request, res: Response, next: NextFunction) => {
+                    next();
+                },
+            ],
         });
         Object.defineProperty(target, ROUTES_DEFINITION, {
             configurable: true,
